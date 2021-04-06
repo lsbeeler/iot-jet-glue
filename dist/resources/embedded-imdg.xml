@@ -27,7 +27,7 @@
     -->
     <cluster-name>iot-jet-glue</cluster-name>
 
-    <license-key>JET_ENT#10Nodes#HUfQZT6AjNlm5O8bDXwuG0Jygni1SPMWKkEBdY29qC13120100100311130040009100110000111000919100</license-key>
+    <license-key>JET_ENT#10Nodes#nPTQgdy8kfYjiN2605CuGmMX1JSKODqHlw9UBAEWbZ20100100110001630030001100901900901002101101</license-key>
 
     <network>
         <port auto-increment="true" port-count="100">5901</port>

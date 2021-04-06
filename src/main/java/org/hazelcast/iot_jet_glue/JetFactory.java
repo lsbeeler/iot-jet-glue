@@ -16,7 +16,7 @@ public class JetFactory
     private static final File IMDG_CONFIG_FILE =
             new File(IMDG_CONFIG_FILE_PATH);
 
-    public static JetInstance createJetInstance( )
+    public static JetInstance create( )
     {
         XmlConfigBuilder imdgConfigBuilder = null;
         try {
