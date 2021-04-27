@@ -18,13 +18,16 @@ public enum SinkType
     public static Optional<SinkType> fromProperties(String propsPath,
             String propsKey)
     {
+        propsKey = propsKey + ".sink";
+
         Optional<SinkType> result = Optional.empty( );
 
         try {
             Properties props = new Properties( );
             props.load(new FileReader(propsPath));
-            result = Optional.of(
-                    SinkType.valueOf((String) props.get(propsKey)));
+            String propsValue = (String) props.get(propsKey);
+            if (propsValue != null)
+                result = Optional.of(SinkType.valueOf(propsValue));
         } catch (IOException e) {
             ERROR_LOG.severe("unable to open properties file: " + new File(
                     propsPath).getAbsolutePath( ) + ": " + e.getMessage( ));

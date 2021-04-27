@@ -3,8 +3,13 @@ package org.hazelcast.iot_jet_glue;
 import org.hazelcast.model.Position;
 import org.json.simple.JSONObject;
 
+import java.util.logging.Logger;
+
 public class PositionFormatter
 {
+    private static final Logger LOG = Logger.getLogger(
+            "org.hazelcast" + ".iot_jet_glue.PositionFormatter");
+
     @SuppressWarnings("unchecked")
     public static String format(Position position)
     {
@@ -21,6 +26,8 @@ public class PositionFormatter
         resultObj.put("accuracy", position.getAccuracy( ));
         resultObj.put("course", position.getCourse( ));
 
-        return resultObj.toJSONString( );
+        String result = resultObj.toJSONString( );
+        LOG.info("formatted Position object as JSON " + result);
+        return result;
     }
 }
