@@ -60,10 +60,10 @@ public class EventRuleEngine
             if (validDelta) {
                 long timeDelta = exitTime - entryTime;
 
-                if (timeDelta > NO_STOP_THRESHOLD_MSEC) {
+                if (timeDelta < NO_STOP_THRESHOLD_MSEC) {
                     LOG.info("geofence exit - entry delta time of " +
-                            timeDelta / 1000 + " seconds exceeds no-stop " +
-                            "threshold time of " + NO_STOP_THRESHOLD_MSEC /
+                            timeDelta / 1000 + " seconds is less than no-stop" +
+                            " threshold time of " + NO_STOP_THRESHOLD_MSEC /
                             1000 + " seconds.");
                     RuleViolation violation = new RuleViolation(
                             "failedToStop",
