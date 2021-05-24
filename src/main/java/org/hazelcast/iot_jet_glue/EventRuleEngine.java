@@ -1,11 +1,13 @@
 package org.hazelcast.iot_jet_glue;
 
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.hazelcast.model.Event;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public class EventRuleEngine
@@ -13,11 +15,16 @@ public class EventRuleEngine
     private static final Logger LOG = Logger.getLogger(
             "org.hazelcast.iot_jet_glue.PositionFormatter");
     private static final long NO_STOP_THRESHOLD_MSEC = 6500;
-    private static Map<String, Event> geofenceEntryMap =
-            new ConcurrentHashMap<>( );
+    private static Map<String, Event> geofenceEntryMap;
     private static final String RULE_VIOLATION_TOPIC_NAME = "rules";
     private static Producer<String, String> rulesProducer =
             App.getRulesProducer( );
+
+    static {
+        ClientConfig config = RemoteIMDGConfigFactory.createConfig( );
+        HazelcastInstance hz = HazelcastClient.newHazelcastClient(config);
+        geofenceEntryMap = hz.getMap("geofenceActions");
+    }
 
     public static Event apply(Event event)
     {
@@ -66,7 +73,7 @@ public class EventRuleEngine
                     return event;
 
                 if (timeDelta < NO_STOP_THRESHOLD_MSEC) {
-                    LOG.info("geofence exit - entry delta time of " +
+                    LOG.info("geofence (exit - entry) delta time of " +
                             timeDelta / 1000 + " seconds is less than no-stop" +
                             " threshold time of " + NO_STOP_THRESHOLD_MSEC /
                             1000 + " seconds.");
@@ -85,7 +92,6 @@ public class EventRuleEngine
                             "threshold time of " + NO_STOP_THRESHOLD_MSEC /
                             1000 + " seconds.");
                 }
-
             }
         }
 

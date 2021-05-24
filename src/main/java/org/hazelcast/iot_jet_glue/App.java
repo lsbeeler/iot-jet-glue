@@ -18,10 +18,10 @@ import static com.hazelcast.jet.pipeline.JournalInitialPosition.START_FROM_OLDES
 
 public class App 
 {
+    public static JetInstance embeddedInstance = JetFactory.create( );
+
     public static void main(String[ ] args)
     {
-        JetInstance embeddedInstance = JetFactory.create( );
-
         Sink<Map.Entry<Long, String>> positionsSink = SinkFactory.create(
                 EntityType.POSITION, "resources/pipeline-config.properties");
         Pipeline positionsPipeline = Pipeline.create( );
