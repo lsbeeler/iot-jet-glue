@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 public class PositionFormatter
 {
     private static final Logger LOG = Logger.getLogger(
-            "org.hazelcast" + ".iot_jet_glue.PositionFormatter");
+            "org.hazelcast.iot_jet_glue.PositionFormatter");
 
     @SuppressWarnings("unchecked")
     public static String format(Position position)

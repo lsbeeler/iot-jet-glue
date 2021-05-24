@@ -32,29 +32,12 @@ public class SinkFactory
         if (sinkType == SinkType.LOGGER)
             return Sinks.logger( );
 
-        Properties props = new Properties( );
+        Properties props = KafkaUtils.loadPropertiesForStream(entityType);
 
-        try {
-            props.load(new FileReader(BROKER_PROPERTIES_FILE_PATH));
-            props.put("acks", "all");
-            props.put("key.serializer",
-                    "org.apache.kafka.common.serialization.LongSerializer");
-            props.put("value.serializer",
-                    "org.apache.kafka.common.serialization.StringSerializer");
-
-            String streamName = (String) props.get("client.id");
-            if (streamName == null)
-                streamName = "hazelcast_jet_telematics";
-            streamName = streamName + "-" + entityNameToStreamName(entityType);
-            LOGGER.info("creating Kafka client id " + streamName);
-            props.put("client.id", streamName);
-        } catch (IOException e) {
-            System.err.println("unable to load Kafka properties from file " +
-                    new File(BROKER_PROPERTIES_FILE_PATH).getAbsolutePath( ) +
-                    ": " + e.getMessage( ));
-            e.printStackTrace( );
-            System.exit(127);
-        }
+        props.put("key.serializer",
+                "org.apache.kafka.common.serialization.LongSerializer");
+        props.put("value.serializer",
+                "org.apache.kafka.common.serialization.StringSerializer");
 
         String topicName = entityNameToStreamName(entityType);
 
