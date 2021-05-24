@@ -13,12 +13,13 @@ public class EventRuleEngine
     private static final Logger LOG = Logger.getLogger(
             "org.hazelcast.iot_jet_glue.PositionFormatter");
     private static final long NO_STOP_THRESHOLD_MSEC = 6500;
-    private static Map<Long, Event> geofenceEntryMap = new ConcurrentHashMap<>( );
+    private static Map<String, Event> geofenceEntryMap =
+            new ConcurrentHashMap<>( );
     private static final String RULE_VIOLATION_TOPIC_NAME = "rules";
     private static Producer<String, String> rulesProducer =
             App.getRulesProducer( );
 
-    static Event apply(Event event)
+    public static Event apply(Event event)
     {
         if (!event.getType( ).equals("geofenceEnter") &&
                 !event.getType( ).equals("geofenceExit")) {
@@ -28,10 +29,11 @@ public class EventRuleEngine
         LOG.info("running business rules on event: " + EventFormatter.format(
                 event));
 
-        if (!geofenceEntryMap.containsKey(event.getDeviceId( ))) {
-            geofenceEntryMap.put(event.getDeviceId( ), event);
+        String k = makeKey(event);
+        if (!geofenceEntryMap.containsKey(k)) {
+            geofenceEntryMap.put(k, event);
         } else {
-            Event cachedEvt = geofenceEntryMap.get(event.getDeviceId( ));
+            Event cachedEvt = geofenceEntryMap.get(k);
 
             long entryTime = 0;
             long exitTime = 0;
@@ -60,6 +62,9 @@ public class EventRuleEngine
             if (validDelta) {
                 long timeDelta = exitTime - entryTime;
 
+                if (timeDelta < 0)
+                    return event;
+
                 if (timeDelta < NO_STOP_THRESHOLD_MSEC) {
                     LOG.info("geofence exit - entry delta time of " +
                             timeDelta / 1000 + " seconds is less than no-stop" +
@@ -82,11 +87,13 @@ public class EventRuleEngine
                 }
 
             }
-
-            if (validDelta)
-                geofenceEntryMap.remove(event.getDeviceId( ));
         }
 
         return event;
+    }
+
+    public static String makeKey(Event evt)
+    {
+        return evt.getDeviceId( ) + "-" + evt.getGeofenceId( );
     }
 }
