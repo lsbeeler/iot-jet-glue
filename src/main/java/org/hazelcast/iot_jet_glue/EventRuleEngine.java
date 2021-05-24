@@ -83,7 +83,8 @@ public class EventRuleEngine
 
             }
 
-            geofenceEntryMap.remove(event.getDeviceId( ));
+            if (validDelta)
+                geofenceEntryMap.remove(event.getDeviceId( ));
         }
 
         return event;
